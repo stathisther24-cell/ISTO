@@ -3,182 +3,416 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Παιχνίδι Ερωτήσεων Ιστορίας</title>
-
+    <title>Ιστορικό Κουίζ</title>
     <style>
+        /* --- Γενικό Στυλ --- */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+        :root {
+            --bg-color: #3e2b6a;
+            --text-color: #ffffff;
+            --card-bg: #ffffff;
+            --card-text: #333333;
+            --red: #e74c3c;
+            --blue: #3498db;
+            --green: #2ecc71;
+            --yellow: #f1c40f;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f0f2f5;
-            color: #333;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            margin: 0;
-            padding: 1em;
-            box-sizing: border-box;
+            overflow: hidden;
         }
 
-        .container {
-            background: white;
-            padding: 2em;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 500px;
+        .hidden {
+            display: none !important;
+        }
+
+        /* --- Κοντέινερ Παιχνιδιού --- */
+        #game-container {
+            width: 95%;
+            max-width: 800px;
             text-align: center;
+            padding: 20px;
+        }
+
+        /* --- Οθόνη Έναρξης --- */
+        #start-screen h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        #start-button {
+            background-color: var(--green);
+            color: white;
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        #start-button:hover {
+            transform: scale(1.05);
+        }
+        
+        /* --- Οθόνη Κουίζ --- */
+        #quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        #score, #question-counter {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        #question-container {
+            background-color: var(--card-bg);
+            color: var(--card-text);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
         #question-text {
-            font-size: 1.5em;
-            margin-bottom: 1.5em;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
         }
 
-        #options-container button {
-            display: block;
-            width: 100%;
-            padding: 1em;
-            margin-bottom: 0.8em;
-            font-size: 1em;
-            border: 2px solid #ddd;
+        #timer-container {
+            width: 80px;
+            height: 80px;
+            background-color: var(--card-bg);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--bg-color);
+            margin: 0 auto 20px;
+            border: 5px solid var(--bg-color);
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        #options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .option-btn {
+            padding: 20px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border: none;
             border-radius: 8px;
-            background-color: #fafafa;
+            color: white;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: transform 0.2s, filter 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
         }
 
-        #options-container button:hover:not(:disabled) {
-            background-color: #e9e9e9;
-            border-color: #ccc;
+        .option-btn:hover {
+            transform: scale(1.03);
+            filter: brightness(1.1);
         }
 
-        #feedback-container {
-            margin-top: 1.5em;
-            font-size: 1.2em;
-            font-weight: bold;
-            min-height: 50px; /* Για να μην "πηδάει" η σελίδα */
-            padding: 0 1em;
+        .option-btn.correct {
+            animation: pulse-correct 0.8s;
         }
 
-        .correct {
-            color: #28a745;
+        .option-btn.incorrect {
+            animation: pulse-incorrect 0.8s;
+            filter: grayscale(80%) brightness(0.8);
         }
 
-        .wrong {
-            color: #dc3545;
+        @keyframes pulse-correct {
+            0% { transform: scale(1); background-color: var(--color); }
+            50% { transform: scale(1.1); background-color: var(--green); }
+            100% { transform: scale(1); background-color: var(--green); }
+        }
+        
+        @keyframes pulse-incorrect {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.9); }
+            100% { transform: scale(1); }
         }
 
-        /* Στυλ για τα κουμπιά μετά την απάντηση */
-        .correct-answer {
-            background-color: #d4edda !important;
-            border-color: #c3e6cb !important;
-            color: #155724 !important;
+        .shape {
+            width: 30px;
+            height: 30px;
+            margin-right: 15px;
         }
 
-        .wrong-answer {
-            background-color: #f8d7da !important;
-            border-color: #f5c6cb !important;
-            color: #721c24 !important;
+        .triangle { width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-bottom: 30px solid white; }
+        .diamond { width: 25px; height: 25px; background: white; transform: rotate(45deg); }
+        .circle { width: 30px; height: 30px; background: white; border-radius: 50%; }
+        .square { width: 25px; height: 25px; background: white; }
+
+        /* --- Οθόνη Αποτελεσμάτων --- */
+        #results-screen {
+            background-color: var(--card-bg);
+            color: var(--card-text);
+            padding: 40px;
+            border-radius: 15px;
         }
 
-        button:disabled {
-            cursor: default;
+        #results-screen h2 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
         }
+        
+        #final-score {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--green);
+            margin-bottom: 20px;
+        }
+
+        #restart-button {
+            background-color: var(--blue);
+            color: white;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        #restart-button:hover {
+            transform: scale(1.05);
+        }
+
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1 id="question-text">Φόρτωση ερώτησης...</h1>
-        <div id="options-container">
+    <div id="game-container">
+        <!-- 1. Οθόνη Έναρξης -->
+        <div id="start-screen">
+            <h1>Ιστορικό Κουίζ</h1>
+            <button id="start-button">Έναρξη!</button>
+        </div>
+
+        <!-- 2. Οθόνη Κουίζ -->
+        <div id="quiz-screen" class="hidden">
+            <div id="quiz-header">
+                <div id="question-counter">1 / 10</div>
+                <div id="score">Σκορ: 0</div>
             </div>
-        <div id="feedback-container">
+            <div id="question-container">
+                <p id="question-text">Αυτή είναι η ερώτηση;</p>
             </div>
+            <div id="timer-container">
+                <span id="timer">10</span>
+            </div>
+            <div id="options-grid">
+                <!-- Οι επιλογές θα δημιουργηθούν δυναμικά με JavaScript -->
+            </div>
+        </div>
+
+        <!-- 3. Οθόνη Αποτελεσμάτων -->
+        <div id="results-screen" class="hidden">
+            <h2>Το παιχνίδι τελείωσε!</h2>
+            <p>Το τελικό σου σκορ είναι:</p>
+            <div id="final-score">0</div>
+            <button id="restart-button">Παίξε Ξανά</button>
+        </div>
     </div>
 
-    <script>
-        // --- 1. ΟΙ ΕΡΩΤΗΣΕΙΣ ---
-        const questions = [
-          {
-            id: 1,
-            question: "Σε ποια μάχη το 490 π.Χ. οι Αθηναίοι νίκησαν τους Πέρσες;",
-            options: ["Μάχη των Θερμοπυλών", "Μάχη του Μαραθώνα", "Ναυμαχία της Σαλαμίνας"],
-            correctAnswer: 1, // Η σωστή απάντηση είναι η δεύτερη (ο δείκτης ξεκινά από το 0)
-            explanation: "Η Μάχη του Μαραθώνα ήταν μια καθοριστική νίκη των Αθηναίων έναντι της πρώτης περσικής εισβολής."
-          },
-          {
-            id: 2,
-            question: "Ποιος ήταν ο αρχιτέκτονας του Παρθενώνα;",
-            options: ["Φειδίας", "Ικτίνος", "Περικλής"],
-            correctAnswer: 1,
-            explanation: "Ο Ικτίνος και ο Καλλικράτης ήταν οι αρχιτέκτονες του Παρθενώνα, υπό την καλλιτεχνική εποπτεία του Φειδία."
-          },
-          {
-            id: 3,
-            question: "Ποια πόλη-κράτος ήταν ο κύριος αντίπαλος της Αθήνας κατά τον Πελοποννησιακό Πόλεμο;",
-            options: ["Κόρινθος", "Θήβα", "Σπάρτη"],
-            correctAnswer: 2,
-            explanation: "Ο Πελοποννησιακός Πόλεμος διεξήχθη κυρίως μεταξύ της Αθηναϊκής Συμμαχίας και της Πελοποννησιακής Συμμαχίας, με ηγέτιδα δύναμη τη Σπάρτη."
-          }
-        ];
+<script>
+document.addEventListener('DOMContentLoaded', () => {
 
-        // --- 2. Η ΛΟΓΙΚΗ ΤΟΥ ΠΑΙΧΝΙΔΙΟΥ ---
-        window.onload = function() {
-            // Παίρνουμε τα στοιχεία της σελίδας
-            const questionTextElement = document.getElementById('question-text');
-            const optionsContainer = document.getElementById('options-container');
-            const feedbackContainer = document.getElementById('feedback-container');
+    // --- Βάση Δεδομένων Ερωτήσεων ---
+    // Προσθέστε εδώ τις δικές σας ερωτήσεις
+    const questions = [
+        {
+            question: "Πότε ξεκίνησε η Ελληνική Επανάσταση;",
+            answers: [
+                { text: "1821", correct: true },
+                { text: "1940", correct: false },
+                { text: "1453", correct: false },
+                { text: "1789", correct: false }
+            ]
+        },
+        {
+            question: "Ποιος ήταν ο αρχηγός των Αχαιών στον Τρωικό Πόλεμο;",
+            answers: [
+                { text: "Οδυσσέας", correct: false },
+                { text: "Αχιλλέας", correct: false },
+                { text: "Αγαμέμνονας", correct: true },
+                { text: "Έκτορας", correct: false }
+            ]
+        },
+        {
+            question: "Σε ποια μάχη ηττήθηκαν οι 300 του Λεωνίδα;",
+            answers: [
+                { text: "Μάχη του Μαραθώνα", correct: false },
+                { text: "Μάχη των Θερμοπυλών", correct: true },
+                { text: "Ναυμαχία της Σαλαμίνας", correct: false },
+                { text: "Μάχη των Πλαταιών", correct: false }
+            ]
+        },
+        {
+            question: "Ποια πόλη-κράτος ήταν ο κύριος αντίπαλος της Αθήνας στον Πελοποννησιακό Πόλεμο;",
+            answers: [
+                { text: "Κόρινθος", correct: false },
+                { text: "Θήβα", correct: false },
+                { text: "Άργος", correct: false },
+                { text: "Σπάρτη", correct: true }
+            ]
+        }
+    ];
 
-            // Βρίσκουμε το 'id' της ερώτησης από το URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const questionId = parseInt(urlParams.get('id'));
+    const optionColors = ['var(--red)', 'var(--blue)', 'var(--yellow)', 'var(--green)'];
+    const optionShapes = ['triangle', 'diamond', 'circle', 'square'];
 
-            // Βρίσκουμε την ερώτηση που αντιστοιχεί στο id
-            const currentQuestion = questions.find(q => q.id === questionId);
+    // --- DOM Στοιχεία ---
+    const startScreen = document.getElementById('start-screen');
+    const quizScreen = document.getElementById('quiz-screen');
+    const resultsScreen = document.getElementById('results-screen');
+    const startButton = document.getElementById('start-button');
+    const restartButton = document.getElementById('restart-button');
+    
+    const questionCounterEl = document.getElementById('question-counter');
+    const scoreEl = document.getElementById('score');
+    const questionTextEl = document.getElementById('question-text');
+    const timerEl = document.getElementById('timer');
+    const optionsGrid = document.getElementById('options-grid');
+    const finalScoreEl = document.getElementById('final-score');
 
-            if (currentQuestion) {
-                // Αν βρέθηκε η ερώτηση, την εμφανίζουμε
-                displayQuestion(currentQuestion);
-            } else {
-                // Αλλιώς, εμφανίζουμε μήνυμα λάθους
-                questionTextElement.textContent = "Η ερώτηση δεν βρέθηκε! Βεβαιωθείτε ότι το QR Code είναι σωστό.";
+    // --- Μεταβλητές Παιχνιδιού ---
+    let currentQuestionIndex, score, timerInterval;
+    let shuffledQuestions = [];
+
+    // --- Event Listeners ---
+    startButton.addEventListener('click', startGame);
+    restartButton.addEventListener('click', startGame);
+
+    // --- Λειτουργίες Παιχνιδιού ---
+    function startGame() {
+        currentQuestionIndex = 0;
+        score = 0;
+        shuffledQuestions = questions.sort(() => Math.random() - 0.5);
+        
+        startScreen.classList.add('hidden');
+        resultsScreen.classList.add('hidden');
+        quizScreen.classList.remove('hidden');
+        
+        scoreEl.textContent = `Σκορ: 0`;
+        loadNextQuestion();
+    }
+
+    function loadNextQuestion() {
+        resetState();
+        if (currentQuestionIndex < shuffledQuestions.length) {
+            showQuestion(shuffledQuestions[currentQuestionIndex]);
+            startTimer();
+        } else {
+            showResults();
+        }
+    }
+
+    function showQuestion(questionData) {
+        questionTextEl.textContent = questionData.question;
+        questionCounterEl.textContent = `${currentQuestionIndex + 1} / ${shuffledQuestions.length}`;
+        
+        // Δημιουργία κουμπιών επιλογών
+        questionData.answers.forEach((answer, index) => {
+            const button = document.createElement('button');
+            button.classList.add('option-btn');
+            button.style.backgroundColor = optionColors[index];
+
+            const shapeDiv = document.createElement('div');
+            shapeDiv.classList.add('shape', optionShapes[index]);
+            
+            const answerText = document.createElement('span');
+            answerText.textContent = answer.text;
+
+            button.appendChild(shapeDiv);
+            button.appendChild(answerText);
+            
+            button.addEventListener('click', () => selectAnswer(button, answer.correct));
+            optionsGrid.appendChild(button);
+        });
+    }
+
+    function startTimer() {
+        let timeLeft = 10;
+        timerEl.textContent = timeLeft;
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            timerEl.textContent = timeLeft;
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                // Ο χρόνος τελείωσε, προχωράμε στην επόμενη ερώτηση
+                currentQuestionIndex++;
+                setTimeout(loadNextQuestion, 2000); // Δώσε χρόνο να δουν το αποτέλεσμα
             }
+        }, 1000);
+    }
+    
+    function resetState() {
+        clearInterval(timerInterval);
+        while (optionsGrid.firstChild) {
+            optionsGrid.removeChild(optionsGrid.firstChild);
+        }
+    }
 
-            function displayQuestion(q) {
-                questionTextElement.textContent = q.question;
-
-                // Δημιουργούμε ένα κουμπί για κάθε επιλογή
-                q.options.forEach((option, index) => {
-                    const button = document.createElement('button');
-                    button.textContent = option;
-                    button.onclick = () => checkAnswer(index, q.correctAnswer, q.explanation);
-                    optionsContainer.appendChild(button);
-                });
+    function selectAnswer(selectedButton, isCorrect) {
+        clearInterval(timerInterval);
+        
+        // Απενεργοποίηση όλων των κουμπιών
+        Array.from(optionsGrid.children).forEach(button => {
+            button.disabled = true;
+            // Αν δεν είναι το επιλεγμένο, κάνε το γκρι
+            if(button !== selectedButton){
+                button.style.filter = "grayscale(80%)";
             }
+        });
 
-            function checkAnswer(selectedIndex, correctIndex, explanation) {
-                const buttons = optionsContainer.getElementsByTagName('button');
-                
-                // Απενεργοποιούμε όλα τα κουμπιά για να μην ξαναπατηθούν
-                for (let btn of buttons) {
-                    btn.disabled = true;
-                }
+        if (isCorrect) {
+            score += 10;
+            scoreEl.textContent = `Σκορ: ${score}`;
+            selectedButton.classList.add('correct');
+            selectedButton.style.backgroundColor = 'var(--green)';
+        } else {
+            selectedButton.classList.add('incorrect');
+            selectedButton.style.backgroundColor = 'var(--red)';
+        }
 
-                // Ελέγχουμε αν η απάντηση είναι σωστή
-                if (selectedIndex === correctIndex) {
-                    feedbackContainer.textContent = "Σωστό! " + explanation;
-                    feedbackContainer.className = 'correct';
-                    buttons[selectedIndex].classList.add('correct-answer');
-                } else {
-                    feedbackContainer.textContent = "Λάθος. " + explanation;
-                    feedbackContainer.className = 'wrong';
-                    buttons[selectedIndex].classList.add('wrong-answer');
-                    // Δείχνουμε και τη σωστή απάντηση με πράσινο χρώμα
-                    buttons[correctIndex].classList.add('correct-answer');
-                }
-            }
-        };
-    </script>
+        currentQuestionIndex++;
+        setTimeout(loadNextQuestion, 2000); // Αναμονή 2 δευτερολέπτων πριν την επόμενη ερώτηση
+    }
+
+    function showResults() {
+        quizScreen.classList.add('hidden');
+        resultsScreen.classList.remove('hidden');
+        finalScoreEl.textContent = score;
+    }
+});
+</script>
 
 </body>
 </html>
