@@ -17,19 +17,20 @@
             --blue: #3498db;
             --green: #2ecc71;
             --yellow: #f1c40f;
+            --error-color: #ffdddd;
         }
 
         body {
             font-family: 'Poppins', sans-serif;
             margin: 0;
-            padding: 0;
+            padding: 20px;
             background-color: var(--bg-color);
             color: var(--text-color);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            overflow: hidden;
+            box-sizing: border-box;
         }
 
         .hidden {
@@ -41,13 +42,35 @@
             width: 95%;
             max-width: 800px;
             text-align: center;
-            padding: 20px;
         }
 
         /* --- Οθόνη Έναρξης --- */
         #start-screen h1 {
-            font-size: 3rem;
+            font-size: 2.5rem;
             margin-bottom: 20px;
+        }
+        
+        #player-name-input {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.2rem;
+            padding: 10px;
+            width: 80%;
+            max-width: 300px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            border: 2px solid transparent;
+        }
+
+        #player-name-input.error {
+            border-color: var(--red);
+            background-color: var(--error-color);
+        }
+        
+        #name-error, #name-taken-error {
+            color: var(--yellow);
+            height: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
         }
 
         #start-button {
@@ -60,11 +83,8 @@
             cursor: pointer;
             transition: transform 0.2s;
         }
+        #start-button:hover { transform: scale(1.05); }
 
-        #start-button:hover {
-            transform: scale(1.05);
-        }
-        
         /* --- Οθόνη Κουίζ --- */
         #quiz-header {
             display: flex;
@@ -91,7 +111,7 @@
         }
 
         #question-text {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 600;
             margin: 0;
         }
@@ -119,8 +139,8 @@
         }
 
         .option-btn {
-            padding: 20px;
-            font-size: 1.2rem;
+            padding: 15px;
+            font-size: 1.1rem;
             font-weight: 600;
             border: none;
             border-radius: 8px;
@@ -131,64 +151,72 @@
             align-items: center;
             justify-content: flex-start;
         }
-
-        .option-btn:hover {
-            transform: scale(1.03);
-            filter: brightness(1.1);
-        }
-
-        .option-btn.correct {
-            animation: pulse-correct 0.8s;
-        }
-
-        .option-btn.incorrect {
-            animation: pulse-incorrect 0.8s;
-            filter: grayscale(80%) brightness(0.8);
-        }
+        .option-btn:hover { transform: scale(1.03); filter: brightness(1.1); }
+        .option-btn.correct { animation: pulse-correct 0.8s; }
+        .option-btn.incorrect { animation: pulse-incorrect 0.8s; filter: grayscale(80%) brightness(0.8); }
 
         @keyframes pulse-correct {
-            0% { transform: scale(1); background-color: var(--color); }
+            0% { transform: scale(1); }
             50% { transform: scale(1.1); background-color: var(--green); }
             100% { transform: scale(1); background-color: var(--green); }
         }
-        
         @keyframes pulse-incorrect {
             0% { transform: scale(1); }
             50% { transform: scale(0.9); }
             100% { transform: scale(1); }
         }
 
-        .shape {
-            width: 30px;
-            height: 30px;
-            margin-right: 15px;
-        }
+        .shape { width: 25px; height: 25px; margin-right: 10px; }
+        .triangle { width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent; border-bottom: 25px solid white; }
+        .diamond { width: 20px; height: 20px; background: white; transform: rotate(45deg); }
+        .circle { width: 25px; height: 25px; background: white; border-radius: 50%; }
+        .square { width: 20px; height: 20px; background: white; }
 
-        .triangle { width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-bottom: 30px solid white; }
-        .diamond { width: 25px; height: 25px; background: white; transform: rotate(45deg); }
-        .circle { width: 30px; height: 30px; background: white; border-radius: 50%; }
-        .square { width: 25px; height: 25px; background: white; }
-
-        /* --- Οθόνη Αποτελεσμάτων --- */
+        /* --- Οθόνη Αποτελεσμάτων & Podium --- */
         #results-screen {
             background-color: var(--card-bg);
             color: var(--card-text);
-            padding: 40px;
+            padding: 30px;
             border-radius: 15px;
+            width: 100%;
         }
-
-        #results-screen h2 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
+        #results-screen h2 { font-size: 2rem; margin-bottom: 5px; }
+        #final-score { font-size: 3rem; font-weight: 700; color: var(--green); margin-bottom: 20px; }
         
-        #final-score {
-            font-size: 4rem;
-            font-weight: 700;
-            color: var(--green);
-            margin-bottom: 20px;
+        #leaderboard {
+            margin-top: 20px;
         }
-
+        #leaderboard h3 {
+            color: var(--bg-color);
+            border-bottom: 2px solid var(--bg-color);
+            padding-bottom: 10px;
+        }
+        #leaderboard-list {
+            list-style-type: none;
+            padding: 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        #leaderboard-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        #leaderboard-list li:nth-child(1) {
+            background-color: #ffd700; /* Gold */
+            color: black;
+        }
+        #leaderboard-list li:nth-child(2) {
+            background-color: #c0c0c0; /* Silver */
+            color: black;
+        }
+        #leaderboard-list li:nth-child(3) {
+            background-color: #cd7f32; /* Bronze */
+            color: white;
+        }
         #restart-button {
             background-color: var(--blue);
             color: white;
@@ -198,11 +226,9 @@
             border-radius: 10px;
             cursor: pointer;
             transition: transform 0.2s;
+            margin-top: 20px;
         }
-        
-        #restart-button:hover {
-            transform: scale(1.05);
-        }
+        #restart-button:hover { transform: scale(1.05); }
 
     </style>
 </head>
@@ -212,31 +238,34 @@
         <!-- 1. Οθόνη Έναρξης -->
         <div id="start-screen">
             <h1>Ιστορικό Κουίζ</h1>
+            <input type="text" id="player-name-input" placeholder="Εισάγετε το όνομά σας">
+            <p id="name-taken-error" class="hidden">Αυτό το όνομα έχει ήδη παίξει!</p>
+            <p id="name-error" class="hidden">Παρακαλώ εισάγετε ένα όνομα!</p>
             <button id="start-button">Έναρξη!</button>
         </div>
 
         <!-- 2. Οθόνη Κουίζ -->
         <div id="quiz-screen" class="hidden">
             <div id="quiz-header">
-                <div id="question-counter">1 / 10</div>
-                <div id="score">Σκορ: 0</div>
+                <div id="question-counter"></div>
+                <div id="score"></div>
             </div>
             <div id="question-container">
-                <p id="question-text">Αυτή είναι η ερώτηση;</p>
+                <p id="question-text"></p>
             </div>
-            <div id="timer-container">
-                <span id="timer">10</span>
-            </div>
-            <div id="options-grid">
-                <!-- Οι επιλογές θα δημιουργηθούν δυναμικά με JavaScript -->
-            </div>
+            <div id="timer-container"><span id="timer"></span></div>
+            <div id="options-grid"></div>
         </div>
 
         <!-- 3. Οθόνη Αποτελεσμάτων -->
         <div id="results-screen" class="hidden">
             <h2>Το παιχνίδι τελείωσε!</h2>
-            <p>Το τελικό σου σκορ είναι:</p>
-            <div id="final-score">0</div>
+            <p id="player-result-text"></p>
+            <div id="final-score"></div>
+            <div id="leaderboard">
+                <h3>🏆 Podium 🏆</h3>
+                <ol id="leaderboard-list"></ol>
+            </div>
             <button id="restart-button">Παίξε Ξανά</button>
         </div>
     </div>
@@ -244,54 +273,23 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- Βάση Δεδομένων Ερωτήσεων ---
-    // Προσθέστε εδώ τις δικές σας ερωτήσεις
     const questions = [
-        {
-            question: "Πότε ξεκίνησε η Ελληνική Επανάσταση;",
-            answers: [
-                { text: "1821", correct: true },
-                { text: "1940", correct: false },
-                { text: "1453", correct: false },
-                { text: "1789", correct: false }
-            ]
-        },
-        {
-            question: "Ποιος ήταν ο αρχηγός των Αχαιών στον Τρωικό Πόλεμο;",
-            answers: [
-                { text: "Οδυσσέας", correct: false },
-                { text: "Αχιλλέας", correct: false },
-                { text: "Αγαμέμνονας", correct: true },
-                { text: "Έκτορας", correct: false }
-            ]
-        },
-        {
-            question: "Σε ποια μάχη ηττήθηκαν οι 300 του Λεωνίδα;",
-            answers: [
-                { text: "Μάχη του Μαραθώνα", correct: false },
-                { text: "Μάχη των Θερμοπυλών", correct: true },
-                { text: "Ναυμαχία της Σαλαμίνας", correct: false },
-                { text: "Μάχη των Πλαταιών", correct: false }
-            ]
-        },
-        {
-            question: "Ποια πόλη-κράτος ήταν ο κύριος αντίπαλος της Αθήνας στον Πελοποννησιακό Πόλεμο;",
-            answers: [
-                { text: "Κόρινθος", correct: false },
-                { text: "Θήβα", correct: false },
-                { text: "Άργος", correct: false },
-                { text: "Σπάρτη", correct: true }
-            ]
-        }
+        { question: "Πότε ξεκίνησε η Ελληνική Επανάσταση;", answers: [{ text: "1821", correct: true }, { text: "1940", correct: false }, { text: "1453", correct: false }, { text: "1789", correct: false }] },
+        { question: "Ποιος ήταν ο αρχηγός των Αχαιών στον Τρωικό Πόλεμο;", answers: [{ text: "Οδυσσέας", correct: false }, { text: "Αχιλλέας", correct: false }, { text: "Αγαμέμνονας", correct: true }, { text: "Έκτορας", correct: false }] },
+        { question: "Σε ποια μάχη ηττήθηκαν οι 300 του Λεωνίδα;", answers: [{ text: "Μάχη του Μαραθώνα", correct: false }, { text: "Μάχη των Θερμοπυλών", correct: true }, { text: "Ναυμαχία της Σαλαμίνας", correct: false }, { text: "Μάχη των Πλαταιών", correct: false }] },
+        { question: "Ποια πόλη-κράτος ήταν ο κύριος αντίπαλος της Αθήνας στον Πελοποννησιακό Πόλεμο;", answers: [{ text: "Κόρινθος", correct: false }, { text: "Θήβα", correct: false }, { text: "Άργος", correct: false }, { text: "Σπάρτη", correct: true }] }
     ];
 
     const optionColors = ['var(--red)', 'var(--blue)', 'var(--yellow)', 'var(--green)'];
     const optionShapes = ['triangle', 'diamond', 'circle', 'square'];
 
-    // --- DOM Στοιχεία ---
     const startScreen = document.getElementById('start-screen');
     const quizScreen = document.getElementById('quiz-screen');
     const resultsScreen = document.getElementById('results-screen');
+    
+    const playerNameInput = document.getElementById('player-name-input');
+    const nameError = document.getElementById('name-error');
+    const nameTakenError = document.getElementById('name-taken-error');
     const startButton = document.getElementById('start-button');
     const restartButton = document.getElementById('restart-button');
     
@@ -300,18 +298,49 @@ document.addEventListener('DOMContentLoaded', () => {
     const questionTextEl = document.getElementById('question-text');
     const timerEl = document.getElementById('timer');
     const optionsGrid = document.getElementById('options-grid');
+    
+    const playerResultText = document.getElementById('player-result-text');
     const finalScoreEl = document.getElementById('final-score');
+    const leaderboardList = document.getElementById('leaderboard-list');
 
-    // --- Μεταβλητές Παιχνιδιού ---
-    let currentQuestionIndex, score, timerInterval;
+    let currentQuestionIndex, score, timerInterval, currentPlayerName;
     let shuffledQuestions = [];
 
-    // --- Event Listeners ---
     startButton.addEventListener('click', startGame);
-    restartButton.addEventListener('click', startGame);
+    restartButton.addEventListener('click', () => {
+        resultsScreen.classList.add('hidden');
+        startScreen.classList.remove('hidden');
+        playerNameInput.value = ''; // Καθαρίζουμε το πεδίο ονόματος
+    });
 
-    // --- Λειτουργίες Παιχνιδιού ---
     function startGame() {
+        currentPlayerName = playerNameInput.value.trim();
+
+        // Απόκρυψη όλων των μηνυμάτων λάθους
+        nameError.classList.add('hidden');
+        nameTakenError.classList.add('hidden');
+        playerNameInput.classList.remove('error');
+
+        // Έλεγχος 1: Αν το όνομα είναι κενό
+        if (currentPlayerName === "") {
+            nameError.classList.remove('hidden');
+            playerNameInput.classList.add('error');
+            return;
+        }
+
+        // Έλεγχος 2: Αν το όνομα έχει ήδη παίξει
+        const playedUsers = JSON.parse(localStorage.getItem('quizPlayedUsers')) || [];
+        if (playedUsers.includes(currentPlayerName)) {
+            nameTakenError.classList.remove('hidden');
+            playerNameInput.classList.add('error');
+            return;
+        }
+
+        // Αποθήκευση νέου παίκτη
+        playedUsers.push(currentPlayerName);
+        localStorage.setItem('quizPlayedUsers', JSON.stringify(playedUsers));
+
+        // Έναρξη παιχνιδιού
         currentQuestionIndex = 0;
         score = 0;
         shuffledQuestions = questions.sort(() => Math.random() - 0.5);
@@ -337,22 +366,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function showQuestion(questionData) {
         questionTextEl.textContent = questionData.question;
         questionCounterEl.textContent = `${currentQuestionIndex + 1} / ${shuffledQuestions.length}`;
-        
-        // Δημιουργία κουμπιών επιλογών
         questionData.answers.forEach((answer, index) => {
             const button = document.createElement('button');
             button.classList.add('option-btn');
             button.style.backgroundColor = optionColors[index];
-
-            const shapeDiv = document.createElement('div');
-            shapeDiv.classList.add('shape', optionShapes[index]);
-            
-            const answerText = document.createElement('span');
-            answerText.textContent = answer.text;
-
-            button.appendChild(shapeDiv);
-            button.appendChild(answerText);
-            
+            button.innerHTML = `<div class='shape ${optionShapes[index]}'></div><span>${answer.text}</span>`;
             button.addEventListener('click', () => selectAnswer(button, answer.correct));
             optionsGrid.appendChild(button);
         });
@@ -364,52 +382,72 @@ document.addEventListener('DOMContentLoaded', () => {
         timerInterval = setInterval(() => {
             timeLeft--;
             timerEl.textContent = timeLeft;
-            if (timeLeft <= 0) {
+            if (timeLeft < 0) {
                 clearInterval(timerInterval);
-                // Ο χρόνος τελείωσε, προχωράμε στην επόμενη ερώτηση
-                currentQuestionIndex++;
-                setTimeout(loadNextQuestion, 2000); // Δώσε χρόνο να δουν το αποτέλεσμα
+                Array.from(optionsGrid.children).forEach(button => button.disabled = true);
+                setTimeout(() => {
+                    currentQuestionIndex++;
+                    loadNextQuestion();
+                }, 1500);
             }
         }, 1000);
     }
     
     function resetState() {
         clearInterval(timerInterval);
-        while (optionsGrid.firstChild) {
-            optionsGrid.removeChild(optionsGrid.firstChild);
-        }
+        optionsGrid.innerHTML = '';
     }
 
     function selectAnswer(selectedButton, isCorrect) {
         clearInterval(timerInterval);
-        
-        // Απενεργοποίηση όλων των κουμπιών
         Array.from(optionsGrid.children).forEach(button => {
             button.disabled = true;
-            // Αν δεν είναι το επιλεγμένο, κάνε το γκρι
-            if(button !== selectedButton){
+            if (button !== selectedButton) {
                 button.style.filter = "grayscale(80%)";
             }
         });
 
         if (isCorrect) {
-            score += 10;
+            const points = 10 + (parseInt(timerEl.textContent) || 0);
+            score += points;
             scoreEl.textContent = `Σκορ: ${score}`;
             selectedButton.classList.add('correct');
-            selectedButton.style.backgroundColor = 'var(--green)';
         } else {
             selectedButton.classList.add('incorrect');
-            selectedButton.style.backgroundColor = 'var(--red)';
         }
-
-        currentQuestionIndex++;
-        setTimeout(loadNextQuestion, 2000); // Αναμονή 2 δευτερολέπτων πριν την επόμενη ερώτηση
+        
+        setTimeout(() => {
+            currentQuestionIndex++;
+            loadNextQuestion();
+        }, 1500);
     }
 
     function showResults() {
         quizScreen.classList.add('hidden');
         resultsScreen.classList.remove('hidden');
+        playerResultText.textContent = `Το τελικό σου σκορ, ${currentPlayerName}, είναι:`;
         finalScoreEl.textContent = score;
+        updateLeaderboard();
+    }
+
+    function updateLeaderboard() {
+        const leaderboardData = JSON.parse(localStorage.getItem('quizLeaderboard')) || [];
+        leaderboardData.push({ name: currentPlayerName, score: score });
+        leaderboardData.sort((a, b) => b.score - a.score);
+        
+        const topScores = leaderboardData.slice(0, 10);
+        localStorage.setItem('quizLeaderboard', JSON.stringify(topScores));
+        
+        leaderboardList.innerHTML = '';
+        if (topScores.length === 0) {
+            leaderboardList.innerHTML = '<li>Κανείς δεν έχει παίξει ακόμα.</li>';
+        } else {
+            topScores.forEach(entry => {
+                const li = document.createElement('li');
+                li.innerHTML = `<span>${entry.name}</span><span>${entry.score}</span>`;
+                leaderboardList.appendChild(li);
+            });
+        }
     }
 });
 </script>
